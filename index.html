@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Дневник Тренировок</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -30,6 +34,36 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         }
 
+        /* Material Icons стили */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            vertical-align: middle;
+        }
+
+        .icon {
+            color: #059669;
+            font-size: 18px;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .icon-only {
+            color: inherit;
+            font-size: 18px;
+            vertical-align: middle;
+            margin: 0;
+        }
+
         /* Компактный заголовок */
         .header {
             background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
@@ -41,6 +75,14 @@
             font-size: 16px;
             font-weight: 700;
             margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title .icon {
+            color: white;
+            margin-right: 8px;
+            font-size: 20px;
         }
 
         .header-subtitle {
@@ -94,19 +136,52 @@
 
         /* Голосовая подсказка */
         .voice-hint {
-            background: #f1f5f9;
-            padding: 10px;
+            background: #f0fdf4;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 12px;
-            border-left: 3px solid #64748b;
+            border-left: 3px solid #059669;
             font-size: 12px;
-            color: #475569;
+            color: #047857;
         }
 
         .voice-hint-title {
             font-weight: 600;
-            margin-bottom: 3px;
-            color: #334155;
+            margin-bottom: 6px;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+        }
+
+        .voice-hint-title .icon {
+            color: #059669;
+            margin-right: 6px;
+            animation: pulse-voice 2s infinite;
+        }
+
+        @keyframes pulse-voice {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .voice-status {
+            background: rgba(5, 150, 105, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #047857;
+            display: none;
+        }
+
+        .voice-status.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Дневник */
@@ -129,6 +204,13 @@
             font-size: 15px;
             font-weight: 600;
             color: #1e293b;
+            display: flex;
+            align-items: center;
+        }
+
+        .diary-title .icon {
+            color: #059669;
+            margin-right: 6px;
         }
 
         .workout-timer {
@@ -167,11 +249,21 @@
             padding: 12px;
             margin-bottom: 10px;
             border-left: 3px solid #e2e8f0;
+            transition: all 0.3s ease;
         }
 
         .exercise-item.active {
             border-left-color: #059669;
             background: #f0fdf4;
+        }
+
+        .exercise-item.new-added {
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .exercise-header {
@@ -204,7 +296,6 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 14px;
         }
 
         .control-btn:active {
@@ -219,6 +310,10 @@
         .control-btn.delete {
             color: #dc2626;
             border-color: #dc2626;
+        }
+
+        .control-btn .icon-only {
+            font-size: 16px;
         }
 
         /* Подходы */
@@ -310,6 +405,10 @@
             box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
             width: 100%;
             margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .btn:active {
@@ -332,6 +431,11 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
+        }
+
+        .btn .icon-only {
+            font-size: 16px;
+            color: inherit;
         }
 
         /* Прогресс */
@@ -392,6 +496,10 @@
             transition: all 0.2s;
             font-size: 10px;
             color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
         }
 
         .nav-item.active {
@@ -399,9 +507,8 @@
             background: rgba(5, 150, 105, 0.1);
         }
 
-        .nav-icon {
+        .nav-item .icon-only {
             font-size: 18px;
-            margin-bottom: 2px;
         }
 
         /* Календарь */
@@ -478,10 +585,14 @@
         }
 
         .calendar-day.has-workout::after {
-            content: '💪';
+            content: '';
             position: absolute;
             bottom: 2px;
-            font-size: 10px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
         }
 
         .calendar-day:active:not(.header) {
@@ -601,6 +712,13 @@
             color: #1e293b;
             margin-bottom: 4px;
             font-size: 13px;
+            display: flex;
+            align-items: center;
+        }
+
+        .template-name .icon {
+            margin-right: 6px;
+            font-size: 16px;
         }
 
         .template-exercises {
@@ -618,6 +736,7 @@
             font-size: 48px;
             margin-bottom: 12px;
             opacity: 0.5;
+            color: #94a3b8;
         }
 
         .notification {
@@ -673,7 +792,10 @@
     <div class="container">
         <!-- Заголовок -->
         <div class="header">
-            <div class="header-title">💪 Добро пожаловать, <span id="userName">Пользователь</span></div>
+            <div class="header-title">
+                <span class="material-symbols-outlined icon">fitness_center</span>
+                Добро пожаловать, <span id="userName">Пользователь</span>
+            </div>
             <div class="header-subtitle">Твой путь к идеальной форме</div>
             <div class="header-date" id="currentDate"></div>
         </div>
@@ -693,13 +815,22 @@
         <!-- Основной контент -->
         <div class="main-content" id="mainContent">
             <div class="voice-hint">
-                <div class="voice-hint-title">🎤 Голосовое управление</div>
-                <div>Говорите в Telegram боте: "жим лежа 80 кг 10 раз"</div>
+                <div class="voice-hint-title">
+                    <span class="material-symbols-outlined icon">mic</span>
+                    Голосовое управление активно
+                </div>
+                <div>Говорите в Telegram: "жим лежа 80 кг 10 раз" или "добавить приседания 90 кило 8 повторений"</div>
+                <div class="voice-status" id="voiceStatus">
+                    Ожидание голосовой команды...
+                </div>
             </div>
 
             <div class="workout-diary">
                 <div class="diary-header">
-                    <div class="diary-title">Дневник тренировок</div>
+                    <div class="diary-title">
+                        <span class="material-symbols-outlined icon">menu_book</span>
+                        Дневник тренировок
+                    </div>
                     <div class="workout-timer" id="workoutTimer">
                         <div class="timer-dot"></div>
                         <span id="timerDisplay">00:00</span>
@@ -708,22 +839,33 @@
 
                 <div id="exercisesList">
                     <div class="empty-state">
-                        <div class="empty-icon">📝</div>
+                        <div class="empty-icon">
+                            <span class="material-symbols-outlined">edit_note</span>
+                        </div>
                         <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #475569;">
                             Начните новую тренировку
                         </div>
                         <div style="font-size: 12px; color: #64748b;">
-                            Добавьте упражнения или используйте шаблон
+                            Добавьте упражнения голосом или используйте кнопки
                         </div>
                     </div>
                 </div>
 
                 <div class="btn-grid">
-                    <button class="btn btn-secondary" onclick="showAddExercise()">+ Упражнение</button>
-                    <button class="btn btn-secondary" onclick="showTemplates()">📋 Шаблоны</button>
+                    <button class="btn btn-secondary" onclick="showAddExercise()">
+                        <span class="material-symbols-outlined icon-only">add</span>
+                        Упражнение
+                    </button>
+                    <button class="btn btn-secondary" onclick="showTemplates()">
+                        <span class="material-symbols-outlined icon-only">list</span>
+                        Шаблоны
+                    </button>
                 </div>
 
-                <button class="btn" id="startBtn" onclick="toggleWorkout()">🏋️ Начать тренировку</button>
+                <button class="btn" id="startBtn" onclick="toggleWorkout()">
+                    <span class="material-symbols-outlined icon-only">play_arrow</span>
+                    Начать тренировку
+                </button>
 
                 <div class="workout-progress" id="workoutProgress">
                     <div class="progress-text" id="progressText">Готов к тренировке</div>
@@ -739,9 +881,13 @@
             <div class="calendar-header">
                 <h2 style="font-size: 16px; font-weight: 600;">Календарь</h2>
                 <div class="month-nav">
-                    <button class="month-btn" onclick="changeMonth(-1)">◀</button>
+                    <button class="month-btn" onclick="changeMonth(-1)">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
                     <span id="currentMonth" style="font-size: 14px; font-weight: 600;"></span>
-                    <button class="month-btn" onclick="changeMonth(1)">▶</button>
+                    <button class="month-btn" onclick="changeMonth(1)">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
                 </div>
             </div>
             <div class="calendar" id="calendar"></div>
@@ -757,15 +903,15 @@
     <!-- Нижнее меню -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchView('main')">
-            <div class="nav-icon">🏠</div>
+            <span class="material-symbols-outlined icon-only">home</span>
             <div>Главная</div>
         </div>
         <div class="nav-item" onclick="switchView('calendar')">
-            <div class="nav-icon">📅</div>
+            <span class="material-symbols-outlined icon-only">calendar_month</span>
             <div>Календарь</div>
         </div>
         <div class="nav-item" onclick="switchView('progress')">
-            <div class="nav-icon">📊</div>
+            <span class="material-symbols-outlined icon-only">trending_up</span>
             <div>Прогресс</div>
         </div>
     </div>
@@ -799,7 +945,10 @@
                 <input type="number" id="exerciseWeight" class="form-input" value="20" min="0" step="0.5">
             </div>
 
-            <button class="btn" onclick="addExercise()">Добавить упражнение</button>
+            <button class="btn" onclick="addExercise()">
+                <span class="material-symbols-outlined icon-only">check</span>
+                Добавить упражнение
+            </button>
         </div>
     </div>
 
@@ -817,6 +966,7 @@
                 <div class="custom-template-header">
                     <span>Мои шаблоны</span>
                     <button class="btn btn-secondary" onclick="showSaveTemplate()" style="padding: 6px 12px; font-size: 11px; margin: 0;">
+                        <span class="material-symbols-outlined icon-only">save</span>
                         Сохранить текущую
                     </button>
                 </div>
@@ -838,21 +988,37 @@
                 <input type="text" id="templateName" class="form-input" placeholder="Например: Моя программа">
             </div>
 
-            <button class="btn" onclick="saveCustomTemplate()">Сохранить шаблон</button>
+            <button class="btn" onclick="saveCustomTemplate()">
+                <span class="material-symbols-outlined icon-only">save</span>
+                Сохранить шаблон
+            </button>
         </div>
     </div>
 
     <script>
-        // Telegram Web App
+        // Telegram Web App инициализация
         let tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
             tg.disableVerticalSwipes();
 
+            // Получить данные пользователя
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 document.getElementById('userName').textContent = user.first_name || 'Пользователь';
+            }
+
+            // Отправить сообщение родительскому окну о готовности
+            tg.MainButton.setText("Открыть в Telegram");
+            tg.MainButton.show();
+
+            // Уведомить родителя о готовности к получению команд
+            if (window.parent) {
+                window.parent.postMessage({
+                    type: 'webapp_ready',
+                    webapp_url: window.location.href
+                }, '*');
             }
         }
 
@@ -871,7 +1037,8 @@
         const defaultTemplates = [
             {
                 id: 'push',
-                name: '💪 Грудь и трицепс',
+                name: 'Грудь и трицепс',
+                icon: 'fitness_center',
                 exercises: [
                     {name: 'Жим лёжа', weight: 80, reps: 10, sets: 4},
                     {name: 'Жим гантелей', weight: 35, reps: 12, sets: 3},
@@ -880,7 +1047,8 @@
             },
             {
                 id: 'pull',
-                name: '🔙 Спина и бицепс',
+                name: 'Спина и бицепс',
+                icon: 'back_hand',
                 exercises: [
                     {name: 'Подтягивания', weight: 0, reps: 8, sets: 4},
                     {name: 'Тяга штанги', weight: 70, reps: 10, sets: 4},
@@ -889,7 +1057,8 @@
             },
             {
                 id: 'legs',
-                name: '🦵 Ноги',
+                name: 'Ноги',
+                icon: 'directions_walk',
                 exercises: [
                     {name: 'Приседания', weight: 90, reps: 10, sets: 4},
                     {name: 'Жим ногами', weight: 180, reps: 12, sets: 3},
@@ -897,6 +1066,221 @@
                 ]
             }
         ];
+
+        // Парсер голосовых команд
+        class VoiceCommandParser {
+            constructor() {
+                this.exercisePatterns = [
+                    // Основные паттерны
+                    /(?:добавить\s+)?([а-яё\s]+?)\s+(\d+(?:[,.]\d+)?)\s*(?:кг|к|кило|килограмм)\s+(\d+)\s*(?:раз|повтор|повторен)/i,
+                    /(?:добавить\s+)?([а-яё\s]+?)\s+(\d+)\s*(?:раз|повтор|повторен)\s+(\d+(?:[,.]\d+)?)\s*(?:кг|к|кило|килограмм)/i,
+                    /([а-яё\s]+?)\s+(\d+(?:[,.]\d+)?)\s*(?:кг|к|кило|килограмм)\s*×?\s*(\d+)/i,
+                    /([а-яё\s]+?)\s+(\d+)\s*×?\s*(\d+(?:[,.]\d+)?)\s*(?:кг|к|кило|килограмм)/i,
+                    // Без веса
+                    /(?:добавить\s+)?([а-яё\s]+?)\s+(\d+)\s*(?:раз|повтор|повторен)/i,
+                    // Простые паттерны
+                    /([а-яё\s]{3,})/i
+                ];
+            }
+
+            parse(text) {
+                if (!text) return null;
+
+                console.log('Парсинг команды:', text);
+
+                // Очистка текста
+                const cleanText = text.toLowerCase()
+                    .replace(/[.,!?;:]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                for (const pattern of this.exercisePatterns) {
+                    const match = cleanText.match(pattern);
+                    if (match) {
+                        const result = this.extractExerciseData(match);
+                        if (result) {
+                            console.log('Распознано упражнение:', result);
+                            return result;
+                        }
+                    }
+                }
+
+                // Если ничего не найдено, попробовать найти хотя бы название
+                const words = cleanText.split(' ').filter(w => w.length > 2);
+                if (words.length > 0) {
+                    const name = words.join(' ');
+                    if (this.isValidExerciseName(name)) {
+                        return {
+                            name: this.normalizeExerciseName(name),
+                            weight: 20,
+                            reps: 10,
+                            sets: 3
+                        };
+                    }
+                }
+
+                return null;
+            }
+
+            extractExerciseData(match) {
+                let name, weight, reps, sets = 3;
+
+                if (match.length >= 4) {
+                    // Полные паттерны с весом и повторениями
+                    name = match[1];
+                    const num1 = parseFloat(match[2].replace(',', '.'));
+                    const num2 = parseFloat(match[3].replace(',', '.'));
+
+                    // Определяем что есть что (вес обычно больше повторений)
+                    if (num1 > num2) {
+                        weight = num1;
+                        reps = num2;
+                    } else {
+                        weight = num2;
+                        reps = num1;
+                    }
+                } else if (match.length >= 3) {
+                    // Упражнение с повторениями без веса
+                    name = match[1];
+                    weight = 0;
+                    reps = parseInt(match[2]);
+                } else {
+                    // Только название упражнения
+                    name = match[1];
+                    weight = 20;
+                    reps = 10;
+                }
+
+                name = this.normalizeExerciseName(name);
+
+                if (!this.isValidExerciseName(name)) {
+                    return null;
+                }
+
+                return {
+                    name,
+                    weight: Math.max(0, weight || 0),
+                    reps: Math.max(1, reps || 10),
+                    sets: Math.max(1, sets)
+                };
+            }
+
+            normalizeExerciseName(name) {
+                return name.trim()
+                    .replace(/\s+/g, ' ')
+                    .replace(/^(добавить|сделать|выполнить)\s+/i, '')
+                    .split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ');
+            }
+
+            isValidExerciseName(name) {
+                if (!name || name.length < 3) return false;
+
+                // Список стоп-слов
+                const stopWords = ['добавить', 'сделать', 'выполнить', 'начать', 'кг', 'раз', 'повтор'];
+                const words = name.toLowerCase().split(' ');
+
+                return !words.every(word => stopWords.includes(word)) && 
+                       words.some(word => word.length > 2);
+            }
+        }
+
+        // Инициализация парсера
+        const voiceParser = new VoiceCommandParser();
+
+        // Обработка входящих сообщений
+        window.addEventListener('message', function(event) {
+            console.log('Получено сообщение:', event.data);
+
+            if (event.data && event.data.type) {
+                switch(event.data.type) {
+                    case 'voice_command':
+                        handleVoiceCommand(event.data.text);
+                        break;
+                    case 'text_command':
+                        handleTextCommand(event.data.text);
+                        break;
+                    case 'bot_ready':
+                        showVoiceStatus('Голосовые команды подключены');
+                        break;
+                }
+            }
+        });
+
+        // Обработка голосовых команд
+        function handleVoiceCommand(text) {
+            console.log('Обработка голосовой команды:', text);
+            showVoiceStatus(`Обрабатываем: "${text}"`);
+
+            const exercise = voiceParser.parse(text);
+
+            if (exercise) {
+                addVoiceExercise(exercise);
+                showVoiceStatus(`✅ Добавлено: ${exercise.name}`);
+                showNotification(`🎤 Добавлено голосом: ${exercise.name} ${exercise.weight}кг × ${exercise.reps}`);
+            } else {
+                showVoiceStatus(`❌ Не удалось распознать: "${text}"`);
+                showNotification('Попробуйте сказать: "жим лежа 80 кг 10 раз"');
+            }
+
+            // Скрыть статус через 5 секунд
+            setTimeout(() => {
+                hideVoiceStatus();
+            }, 5000);
+        }
+
+        // Обработка текстовых команд
+        function handleTextCommand(text) {
+            console.log('Обработка текстовой команды:', text);
+            handleVoiceCommand(text); // Используем тот же парсер
+        }
+
+        // Добавить упражнение голосом
+        function addVoiceExercise(exerciseData) {
+            const exercise = {
+                id: Date.now() + Math.random(),
+                name: exerciseData.name,
+                sets: exerciseData.sets,
+                reps: exerciseData.reps,
+                weight: exerciseData.weight,
+                completedSets: [],
+                setData: []
+            };
+
+            // Создать данные для подходов
+            for (let i = 0; i < exercise.sets; i++) {
+                exercise.setData.push({
+                    weight: exercise.weight,
+                    reps: exercise.reps
+                });
+            }
+
+            exercises.push(exercise);
+            renderExercises();
+            saveData();
+
+            // Добавить анимацию для нового упражнения
+            setTimeout(() => {
+                const newItem = document.querySelector('.exercise-item:last-child');
+                if (newItem) {
+                    newItem.classList.add('new-added');
+                }
+            }, 100);
+        }
+
+        // Показать статус голосовых команд
+        function showVoiceStatus(message) {
+            const status = document.getElementById('voiceStatus');
+            status.textContent = message;
+            status.classList.add('active');
+        }
+
+        // Скрыть статус голосовых команд
+        function hideVoiceStatus() {
+            const status = document.getElementById('voiceStatus');
+            status.classList.remove('active');
+        }
 
         // Инициализация
         function init() {
@@ -906,7 +1290,11 @@
             renderCalendar();
             updateProgressStats();
 
-            window.addEventListener('message', handleBotCommand);
+            // Показать готовность к голосовым командам
+            setTimeout(() => {
+                showVoiceStatus('Готов к голосовым командам');
+                setTimeout(hideVoiceStatus, 3000);
+            }, 1000);
         }
 
         // Обновить дату
@@ -945,17 +1333,6 @@
             localStorage.setItem('workoutActive', isWorkoutActive);
             if (workoutStartTime) {
                 localStorage.setItem('workoutStartTime', workoutStartTime.toISOString());
-            }
-        }
-
-        // Команды от бота
-        function handleBotCommand(event) {
-            if (event.data && event.data.action) {
-                const {action, exercise, weight, reps} = event.data;
-                if (action === 'add_exercise') {
-                    addQuickExercise(exercise, weight, reps);
-                    showNotification(`✅ ${exercise} ${weight}кг × ${reps}`);
-                }
             }
         }
 
@@ -1044,12 +1421,12 @@
             const progress = document.getElementById('workoutProgress');
 
             if (isWorkoutActive) {
-                btn.textContent = '✅ Завершить тренировку';
+                btn.innerHTML = '<span class="material-symbols-outlined icon-only">stop</span>Завершить тренировку';
                 btn.className = 'btn btn-danger';
                 timer.classList.add('active');
                 progress.classList.add('active');
             } else {
-                btn.textContent = '🏋️ Начать тренировку';
+                btn.innerHTML = '<span class="material-symbols-outlined icon-only">play_arrow</span>Начать тренировку';
                 btn.className = 'btn';
                 timer.classList.remove('active');
                 progress.classList.remove('active');
@@ -1112,22 +1489,6 @@
             showNotification(`Добавлено: ${name}`);
         }
 
-        // Быстрое добавление
-        function addQuickExercise(name, weight, reps) {
-            exercises.push({
-                id: Date.now(),
-                name,
-                sets: 1,
-                reps,
-                weight,
-                completedSets: [],
-                setData: [{weight, reps}]
-            });
-
-            renderExercises();
-            saveData();
-        }
-
         // Отобразить упражнения
         function renderExercises() {
             const container = document.getElementById('exercisesList');
@@ -1135,12 +1496,14 @@
             if (exercises.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">📝</div>
+                        <div class="empty-icon">
+                            <span class="material-symbols-outlined">edit_note</span>
+                        </div>
                         <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #475569;">
                             Начните новую тренировку
                         </div>
                         <div style="font-size: 12px; color: #64748b;">
-                            Добавьте упражнения или используйте шаблон
+                            Добавьте упражнения голосом или используйте кнопки
                         </div>
                     </div>
                 `;
@@ -1152,8 +1515,12 @@
                     <div class="exercise-header">
                         <div class="exercise-name">${ex.name}</div>
                         <div class="exercise-controls">
-                            <div class="control-btn add" onclick="addSet(${ex.id})">+</div>
-                            <div class="control-btn delete" onclick="removeExercise(${ex.id})">🗑</div>
+                            <div class="control-btn add" onclick="addSet(${ex.id})">
+                                <span class="material-symbols-outlined icon-only">add</span>
+                            </div>
+                            <div class="control-btn delete" onclick="removeExercise(${ex.id})">
+                                <span class="material-symbols-outlined icon-only">delete</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1251,7 +1618,10 @@
             const container = document.getElementById('templatesList');
             container.innerHTML = defaultTemplates.map(template => `
                 <div class="template-item" onclick="loadTemplate('${template.id}')">
-                    <div class="template-name">${template.name}</div>
+                    <div class="template-name">
+                        <span class="material-symbols-outlined icon">${template.icon}</span>
+                        ${template.name}
+                    </div>
                     <div class="template-exercises">
                         ${template.exercises.map(ex => ex.name).join(', ')}
                     </div>
@@ -1264,7 +1634,10 @@
             } else {
                 customContainer.innerHTML = customTemplates.map((template, idx) => `
                     <div class="template-item custom" onclick="loadCustomTemplate(${idx})">
-                        <div class="template-name">⭐ ${template.name}</div>
+                        <div class="template-name">
+                            <span class="material-symbols-outlined icon">star</span>
+                            ${template.name}
+                        </div>
                         <div class="template-exercises">
                             ${template.exercises.map(ex => ex.name).join(', ')}
                         </div>
@@ -1430,7 +1803,9 @@
             if (Object.keys(workoutHistory).length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">📊</div>
+                        <div class="empty-icon">
+                            <span class="material-symbols-outlined">trending_up</span>
+                        </div>
                         <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #475569;">
                             Пока нет данных
                         </div>
@@ -1484,7 +1859,7 @@
             }
         });
 
-        // Инициализация
+        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
